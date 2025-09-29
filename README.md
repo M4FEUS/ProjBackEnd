@@ -60,7 +60,7 @@ Certifique-se de ter o Node.js e o MongoDB instalados em sua máquina.
 
 ### Instalação
 
-1.  Clone o repositório:
+1.  Clone o repositório e entre na pasta do projeto:
     ```bash
     git clone <URL_DO_REPOSITORIO>
     cd micro-blogging-api
@@ -69,25 +69,29 @@ Certifique-se de ter o Node.js e o MongoDB instalados em sua máquina.
     ```bash
     npm install
     ```
-3.  Crie um arquivo `.env` na raiz do projeto (opcional, para variáveis de ambiente):
-    ```
+3.  Crie um arquivo `.env` na raiz do projeto (recomendado):
+    ```env
     PORT=3000
     JWT_SECRET=sua_chave_secreta_jwt
     MONGO_URI=mongodb://localhost:27017/microblog
     LOG_LEVEL=info
     ```
-    *Se não for fornecido, o `config.js` usará valores padrão.*
+    Observações:
+    - Se o `.env` não for fornecido, `src/config/config.js` usa valores padrão.
+    - Alternativa ao MongoDB local: use o MongoDB Atlas e ajuste `MONGO_URI` (ex: `mongodb+srv://...`).
 
-4.  Inicie o serviço do MongoDB (se não estiver rodando):
-    ```bash
-    sudo systemctl start mongod
-    ```
+4.  Garanta que o MongoDB esteja em execução:
+    - Windows (instalado como serviço): abra Serviços e verifique o serviço "MongoDB" em execução.
+    - Linux (systemd):
+      ```bash
+      sudo systemctl start mongod
+      ```
 
 5.  Inicie a aplicação:
     ```bash
-    node app.js
+    npm start
     ```
-    A API estará disponível em `http://localhost:3000`.
+    A API ficará disponível em `http://localhost:3000`.
 
 ## Funcionalidades da API
 
@@ -99,6 +103,29 @@ Certifique-se de ter o Node.js e o MongoDB instalados em sua máquina.
 *   `POST /api/auth/login`
     *   **Corpo da Requisição:** `{ "email": "string", "password": "string" }`
     *   **Descrição:** Autentica um usuário e retorna um token JWT.
+
+### Teste Rápido (Quickstart)
+
+1) Registro de usuário
+```bash
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"testuser","email":"test@example.com","password":"secret123"}'
+```
+
+2) Login e obtenção do token
+```bash
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"secret123"}'
+```
+Copie o valor de `token` retornado.
+
+3) Acessar rotas autenticadas
+```bash
+curl http://localhost:3000/api/posts \
+  -H "Authorization: Bearer <TOKEN>"
+```
 
 ### Usuários
 
