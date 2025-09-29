@@ -1,5 +1,7 @@
 /**
  * @file CommentController.js
+ * @description Controlador responsável por lidar com requisições HTTP relacionadas a comentários.
+ * Interage com o CommentService para criar, listar por post e deletar comentários.
  */
 
 const commentService = require("../services/CommentService");
@@ -7,6 +9,12 @@ const logger = require("../utils/logger");
 const mongoose = require("mongoose");
 
 class CommentController {
+  /**
+   * @description Cria um novo comentário em um post.
+   * Extrai `content` e `post_id` do corpo da requisição e o `user.id` do token JWT.
+   * @param {object} req Objeto de requisição do Express.
+   * @param {object} res Objeto de resposta do Express.
+   */
   async create(req, res) {
     try {
       const { content, post_id } = req.body;
@@ -22,6 +30,12 @@ class CommentController {
     }
   }
 
+  /**
+   * @description Lista comentários de um post específico.
+   * Extrai `postId` dos parâmetros da rota e valida como ObjectId.
+   * @param {object} req Objeto de requisição do Express.
+   * @param {object} res Objeto de resposta do Express.
+   */
   async listByPost(req, res) {
     try {
       const { postId } = req.params;
@@ -36,6 +50,12 @@ class CommentController {
     }
   }
 
+  /**
+   * @description Deleta um comentário específico.
+   * Verifica se o usuário autenticado é o autor do comentário antes de deletar.
+   * @param {object} req Objeto de requisição do Express.
+   * @param {object} res Objeto de resposta do Express.
+   */
   async delete(req, res) {
     try {
       const { id } = req.params;
