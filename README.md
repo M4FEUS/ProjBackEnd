@@ -106,25 +106,57 @@ Certifique-se de ter o Node.js e o MongoDB instalados em sua máquina.
 
 ### Teste Rápido (Quickstart)
 
+#### PowerShell (Windows) usando Invoke-RestMethod
+
 1) Registro de usuário
-```bash
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"username":"testuser","email":"test@example.com","password":"secret123"}'
+```powershell
+Invoke-RestMethod -Method Post -Uri "http://localhost:3000/api/auth/register" `
+  -ContentType "application/json" `
+  -Body '{"username":"testuser","email":"test@example.com","password":"secret123"}'
 ```
 
 2) Login e obtenção do token
-```bash
-curl -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"secret123"}'
+```powershell
+$resp = Invoke-RestMethod -Method Post -Uri "http://localhost:3000/api/auth/login" `
+  -ContentType "application/json" `
+  -Body '{"email":"test@example.com","password":"secret123"}'
+$token = $resp.token
 ```
-Copie o valor de `token` retornado.
 
 3) Acessar rotas autenticadas
-```bash
-curl http://localhost:3000/api/posts \
-  -H "Authorization: Bearer <TOKEN>"
+```powershell
+Invoke-RestMethod -Method Get -Uri "http://localhost:3000/api/posts" `
+  -Headers @{ Authorization = "Bearer $token" }
+```
+
+4) Criar um post
+```powershell
+Invoke-RestMethod -Method Post -Uri "http://localhost:3000/api/posts" `
+  -Headers @{ Authorization = "Bearer $token"; "Content-Type" = "application/json" } `
+  -Body '{"content":"hello world"}'
+```
+
+#### Alternativa no PowerShell com curl.exe
+
+Use `curl.exe` (não `curl`) e mantenha tudo em uma linha ou use `^` para quebra de linha:
+
+Registro:
+```powershell
+curl.exe -X POST "http://localhost:3000/api/auth/register" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"username\":\"testuser\",\"email\":\"test@example.com\",\"password\":\"secret123\"}"
+```
+
+Login:
+```powershell
+curl.exe -X POST "http://localhost:3000/api/auth/login" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"email\":\"test@example.com\",\"password\":\"secret123\"}"
+```
+
+Listar posts:
+```powershell
+curl.exe "http://localhost:3000/api/posts" -H "Authorization: Bearer <TOKEN>"
 ```
 
 ### Usuários
