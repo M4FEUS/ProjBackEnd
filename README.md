@@ -143,15 +143,17 @@ Invoke-RestMethod -Method Post -Uri "http://localhost:3000/api/posts" `
 
 5) Criar um comentário
 ```powershell
+$postId = "<POST_ID>"
 Invoke-RestMethod -Method Post -Uri "http://localhost:3000/api/comments" `
   -Headers @{ Authorization = "Bearer $token"; "Content-Type" = "application/json" } `
-  -Body '{"post_id":"<POST_ID>","content":"meu comentário"}'
+  -Body '{"post_id":"$postId","content":"meu comentário"}'
 ```
 
 6) Listar comentários de um post
 ```powershell
-Invoke-RestMethod -Method Get -Uri "http://localhost:3000/api/comments/post/<POST_ID>" `
-  -Headers @{ Authorization = "Bearer $token" }
+$postId = "<POST_ID>"
+Invoke-RestMethod -Method Get -Uri "http://localhost:3000/api/comments/post/$postId" `
+>>   -Headers @{ Authorization = "Bearer $token" }
 ```
 
 <!-- Removida a seção alternativa com curl.exe para simplificar o uso no Windows com Invoke-RestMethod -->
