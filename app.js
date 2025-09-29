@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 3000;
 const authRoutes = require("./src/routes/authRoutes");
 const userRoutes = require("./src/routes/userRoutes");
 const postRoutes = require("./src/routes/postRoutes");
+const commentRoutes = require("./src/routes/commentRoutes");
 
 // Importa o logger para registrar eventos e erros
 const logger = require("./src/utils/logger");
@@ -27,6 +28,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/comments", commentRoutes);
 
 // Middleware de tratamento de erros global
 // Captura erros que ocorrem nas rotas e middlewares e os registra.

@@ -14,6 +14,7 @@ micro-blogging-api/
 ├── package.json
 ├── package-lock.json
 ├── README.md
+├── .env
 ├── logs/
 │   ├── app.log
 │   └── error.log
@@ -23,7 +24,8 @@ micro-blogging-api/
     ├── controllers/
     │   ├── AuthController.js
     │   ├── PostController.js
-    │   └── UserController.js
+    │   ├── UserController.js
+    │   └── CommentController.js
     ├── db/
     │   ├── db.js
     │   └── repository.js
@@ -31,14 +33,17 @@ micro-blogging-api/
     │   └── authMiddleware.js
     ├── models/
     │   ├── Post.js
-    │   └── User.js
+    │   ├── User.js
+    │   └── Comment.js
     ├── repositories/
     │   ├── postRepository.js
-    │   └── userRepository.js
+    │   ├── userRepository.js
+    │   └── commentRepository.js
     ├── routes/
     │   ├── authRoutes.js
     │   ├── postRoutes.js
-    │   └── userRoutes.js
+    │   ├── userRoutes.js
+    │   └── commentRoutes.js
     └── utils/
         └── logger.js
 ```
@@ -136,28 +141,20 @@ Invoke-RestMethod -Method Post -Uri "http://localhost:3000/api/posts" `
   -Body '{"content":"hello world"}'
 ```
 
-#### Alternativa no PowerShell com curl.exe
-
-Use `curl.exe` (não `curl`) e mantenha tudo em uma linha ou use `^` para quebra de linha:
-
-Registro:
+5) Criar um comentário
 ```powershell
-curl.exe -X POST "http://localhost:3000/api/auth/register" ^
-  -H "Content-Type: application/json" ^
-  -d "{\"username\":\"testuser\",\"email\":\"test@example.com\",\"password\":\"secret123\"}"
+Invoke-RestMethod -Method Post -Uri "http://localhost:3000/api/comments" `
+  -Headers @{ Authorization = "Bearer $token"; "Content-Type" = "application/json" } `
+  -Body '{"post_id":"<POST_ID>","content":"meu comentário"}'
 ```
 
-Login:
+6) Listar comentários de um post
 ```powershell
-curl.exe -X POST "http://localhost:3000/api/auth/login" ^
-  -H "Content-Type: application/json" ^
-  -d "{\"email\":\"test@example.com\",\"password\":\"secret123\"}"
+Invoke-RestMethod -Method Get -Uri "http://localhost:3000/api/comments/post/<POST_ID>" `
+  -Headers @{ Authorization = "Bearer $token" }
 ```
 
-Listar posts:
-```powershell
-curl.exe "http://localhost:3000/api/posts" -H "Authorization: Bearer <TOKEN>"
-```
+<!-- Removida a seção alternativa com curl.exe para simplificar o uso no Windows com Invoke-RestMethod -->
 
 ### Usuários
 
@@ -180,6 +177,19 @@ curl.exe "http://localhost:3000/api/posts" -H "Authorization: Bearer <TOKEN>"
 *   `DELETE /api/posts/:id`
     *   **Headers:** `Authorization: Bearer <token_jwt>`
     *   **Descrição:** Deleta um post. Somente o autor pode deletar seu próprio post.
+
+### Comentários
+
+*   `POST /api/comments`
+    *   **Headers:** `Authorization: Bearer <token_jwt>`
+    *   **Corpo da Requisição:** `{ "post_id": "string", "content": "string" }`
+    *   **Descrição:** Cria um comentário em um post.
+*   `GET /api/comments/post/:postId`
+    *   **Headers:** `Authorization: Bearer <token_jwt>`
+    *   **Descrição:** Lista comentários de um post.
+*   `DELETE /api/comments/:id`
+    *   **Headers:** `Authorization: Bearer <token_jwt>`
+    *   **Descrição:** Deleta um comentário (apenas o autor pode deletar).
 
 ## Critérios de Avaliação (EC48B)
 
