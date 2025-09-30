@@ -9,7 +9,7 @@ Este projeto consiste no desenvolvimento de uma API de micro-blogging utilizando
 A estrutura de diretórios foi organizada para promover a modularidade e a clareza do código:
 
 ```
-micro-blogging-api/
+ProjBackEnd/
 ├── app.js
 ├── package.json
 ├── package-lock.json
