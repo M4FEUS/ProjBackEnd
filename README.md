@@ -68,7 +68,7 @@ Certifique-se de ter o Node.js e o MongoDB instalados em sua máquina.
 1.  Clone o repositório e entre na pasta do projeto:
     ```bash
     git clone <URL_DO_REPOSITORIO>
-    cd micro-blogging-api
+    cd ProjBackEnd
     ```
 2.  Instale as dependências:
     ```bash
