@@ -1,8 +1,8 @@
-# Projeto Micro-blogging API (EC48B)
+# ProjBackEnd (Recuperação EC48B)
 
 ## Visão Geral
 
-Este projeto consiste no desenvolvimento de uma API de micro-blogging utilizando Node.js, Express.js e MongoDB. O objetivo é demonstrar a implementação de uma biblioteca de acesso a banco de dados, classes de domínio, casos de uso, sistema de logging e rotas, seguindo os requisitos da disciplina EC48B.
+Este projeto consiste no desenvolvimento de uma API de micro-blogging utilizando Node.js e MongoDB. O objetivo é demonstrar a implementação de uma biblioteca de acesso a banco de dados, classes de domínio, casos de uso, sistema de logging e rotas, seguindo os requisitos da disciplina EC48B.
 
 ## Estrutura do Projeto
 
@@ -10,212 +10,102 @@ A estrutura de diretórios foi organizada para promover a modularidade e a clare
 
 ```
 ProjBackEnd/
-├── app.js
+├── index.js
 ├── package.json
 ├── package-lock.json
 ├── README.md
-├── .env
 ├── logs/
 │   ├── app.log
 │   └── error.log
 └── src/
     ├── config/
     │   └── config.js
-    ├── controllers/
-    │   ├── AuthController.js
-    │   ├── PostController.js
-    │   ├── UserController.js
-    │   └── CommentController.js
     ├── db/
-    │   ├── db.js
-    │   └── repository.js
-    ├── middleware/
-    │   └── authMiddleware.js
+    │   └── db.js
     ├── models/
+    │   ├── Comment.js
     │   ├── Post.js
-    │   ├── User.js
-    │   └── Comment.js
+    │   └── User.js
     ├── repositories/
+    │   ├── commentRepository.js
     │   ├── postRepository.js
-    │   ├── userRepository.js
-    │   └── commentRepository.js
-    ├── routes/
-    │   ├── authRoutes.js
-    │   ├── postRoutes.js
-    │   ├── userRoutes.js
-    │   └── commentRoutes.js
+    │   └── userRepository.js
     └── utils/
         └── logger.js
 ```
 
 ## Tecnologias Utilizadas
 
-*   **Backend:** Node.js, Express.js
+*   **Backend:** Node.js
 *   **Banco de Dados:** MongoDB
 *   **ODM (Object Data Modeling):** Mongoose
-*   **Autenticação:** JSON Web Tokens (JWT)
 *   **Hashing de Senhas:** `bcryptjs`
-*   **Logging:** `winston`
+*   **Logging:** `winston` (configurado para TXT)
 
 ## Como Rodar o Projeto
 
 ### Pré-requisitos
 
-Certifique-se de ter o Node.js e o MongoDB instalados em sua máquina.
+Certifique-se de ter o Node.js e o MongoDB instalados e rodando em sua máquina.
 
 ### Instalação
 
-1.  Clone o repositório e entre na pasta do projeto:
+1.  Clone ou descompacte o repositório:
     ```bash
+    # Se for um repositório git
     git clone <URL_DO_REPOSITORIO>
-    cd micro-blogging-api
+    cd ProjBackEnd
+    # Se for um arquivo zip, descompacte e navegue até a pasta
     ```
 2.  Instale as dependências:
     ```bash
     npm install
     ```
-3.  Crie um arquivo `.env` na raiz do projeto (recomendado):
-    ```env
-    PORT=3000
-    JWT_SECRET=sua_chave_secreta_jwt
-    MONGO_URI=mongodb://localhost:27017/microblog
-    LOG_LEVEL=info
-    ```
-    Observações:
-    - Se o `.env` não for fornecido, `src/config/config.js` usa valores padrão.
-    - Alternativa ao MongoDB local: use o MongoDB Atlas e ajuste `MONGO_URI` (ex: `mongodb+srv://...`).
-
-4.  Garanta que o MongoDB esteja em execução:
-    - Windows (instalado como serviço): abra Serviços e verifique o serviço "MongoDB" em execução.
-    - Linux (systemd):
-      ```bash
-      sudo systemctl start mongod
-      ```
-
-5.  Inicie a aplicação:
+3.  Inicie o serviço do MongoDB (se não estiver rodando):
     ```bash
-    npm start
+    sudo systemctl start mongod
     ```
-    A API ficará disponível em `http://localhost:3000`.
 
-## Funcionalidades da API
+4.  Execute o arquivo principal para rodar os testes CRUD:
+    ```bash
+    node index.js
+    ```
+    Os resultados dos testes serão exibidos no console e registrados nos arquivos de log (`logs/app.log` e `logs/error.log`).
 
-### Autenticação
+## Funcionalidades Demonstradas (CRUD)
 
-*   `POST /api/auth/register`
-    *   **Corpo da Requisição:** `{ "username": "string", "email": "string", "password": "string" }`
-    *   **Descrição:** Registra um novo usuário.
-*   `POST /api/auth/login`
-    *   **Corpo da Requisição:** `{ "email": "string", "password": "string" }`
-    *   **Descrição:** Autentica um usuário e retorna um token JWT.
+O arquivo `index.js` demonstra as operações CRUD completas para as três classes principais:
 
-### Teste Rápido (Quickstart)
+1.  **User (Usuário):**
+    *   Criação de usuários (com senha hasheada).
+    *   Leitura de usuários (por ID e todos).
+    *   Atualização de informações de usuário.
+    *   Exclusão de usuário.
+    *   **Validações:** Exemplo de falha ao criar usuário com email duplicado.
 
-#### PowerShell (Windows) usando Invoke-RestMethod
+2.  **Post (Publicação):**
+    *   Criação de posts (associados a um usuário).
+    *   Leitura de posts (todos e por usuário).
+    *   Atualização de conteúdo de post.
+    *   Exclusão de post.
+    *   **Validações:** Exemplo de falha ao criar post sem `user_id`.
 
-1) Registro de usuário
-```powershell
-Invoke-RestMethod -Method Post -Uri "http://localhost:3000/api/auth/register" `
-  -ContentType "application/json" `
-  -Body '{"username":"testuser","email":"test@example.com","password":"secret123"}'
-```
+3.  **Comment (Comentário):**
+    *   Criação de comentários (associados a um post e um usuário).
+    *   Leitura de comentários (todos e por post).
+    *   Atualização de conteúdo de comentário.
+    *   Exclusão de comentário.
+    *   **Validações:** Exemplo de falha ao criar comentário sem `post_id`.
 
-2) Login e obtenção do token
-```powershell
-$resp = Invoke-RestMethod -Method Post -Uri "http://localhost:3000/api/auth/login" `
-  -ContentType "application/json" `
-  -Body '{"email":"test@example.com","password":"secret123"}'
-$token = $resp.token
-```
-
-3) Acessar rotas autenticadas
-```powershell
-Invoke-RestMethod -Method Get -Uri "http://localhost:3000/api/posts" `
-  -Headers @{ Authorization = "Bearer $token" }
-```
-
-4) Criar um post
-```powershell
-Invoke-RestMethod -Method Post -Uri "http://localhost:3000/api/posts" `
-  -Headers @{ Authorization = "Bearer $token"; "Content-Type" = "application/json" } `
-  -Body '{"content":"hello world"}'
-```
-
-5) Criar um comentário
-```powershell
-$postId = "<POST_ID>"
-Invoke-RestMethod -Method Post -Uri "http://localhost:3000/api/comments" `
-  -Headers @{ Authorization = "Bearer $token"; "Content-Type" = "application/json" } `
-  -Body '{"post_id":"$postId","content":"meu comentário"}'
-```
-
-6) Listar comentários de um post
-```powershell
-$postId = "<POST_ID>"
-Invoke-RestMethod -Method Get -Uri "http://localhost:3000/api/comments/post/$postId" `
->>   -Headers @{ Authorization = "Bearer $token" }
-```
-
-<!-- Removida a seção alternativa com curl.exe para simplificar o uso no Windows com Invoke-RestMethod -->
-
-### Usuários
-
-*   `GET /api/users/:id`
-    *   **Headers:** `Authorization: Bearer <token_jwt>`
-    *   **Descrição:** Retorna o perfil de um usuário específico.
-
-### Posts
-
-*   `POST /api/posts`
-    *   **Headers:** `Authorization: Bearer <token_jwt>`
-    *   **Corpo da Requisição:** `{ "content": "string" }`
-    *   **Descrição:** Cria um novo post.
-*   `GET /api/posts/user/:userId`
-    *   **Headers:** `Authorization: Bearer <token_jwt>`
-    *   **Descrição:** Retorna todos os posts de um usuário específico.
-*   `GET /api/posts`
-    *   **Headers:** `Authorization: Bearer <token_jwt>`
-    *   **Descrição:** Retorna todos os posts da aplicação.
-*   `DELETE /api/posts/:id`
-    *   **Headers:** `Authorization: Bearer <token_jwt>`
-    *   **Descrição:** Deleta um post. Somente o autor pode deletar seu próprio post.
-
-### Comentários
-
-*   `POST /api/comments`
-    *   **Headers:** `Authorization: Bearer <token_jwt>`
-    *   **Corpo da Requisição:** `{ "post_id": "string", "content": "string" }`
-    *   **Descrição:** Cria um comentário em um post.
-*   `GET /api/comments/post/:postId`
-    *   **Headers:** `Authorization: Bearer <token_jwt>`
-    *   **Descrição:** Lista comentários de um post.
-*   `DELETE /api/comments/:id`
-    *   **Headers:** `Authorization: Bearer <token_jwt>`
-    *   **Descrição:** Deleta um comentário (apenas o autor pode deletar).
-
-## Critérios de Avaliação (EC48B)
+## Critérios de Avaliação (Recuperação EC48B)
 
 Este projeto foi desenvolvido com foco nos seguintes critérios:
 
-1.  **Organização do Código:** Estrutura de diretórios clara e modular, separação de responsabilidades (controllers, services, repositories, models).
-2.  **Biblioteca de Acesso a Banco de Dados:** Implementação de uma camada de repositório genérica (`src/db/repository.js`) que interage com o Mongoose para abstrair as operações de CRUD com o MongoDB.
-3.  **Classes de Domínio e Casos de Uso:** Definição de modelos (`src/models/User.js`, `src/models/Post.js`) e serviços (`src/services/AuthService.js`, `src/services/UserService.js`, `src/services/PostService.js`) que encapsulam a lógica de negócio.
-4.  **Sistema de Logging:** Utilização da biblioteca `winston` (`src/utils/logger.js`) para registrar eventos da aplicação (informações, erros, avisos) em arquivos de log e no console.
-5.  **Tratamento de Erros:** Implementação de tratamento de erros em todas as camadas da aplicação (controllers, services) e um middleware de erro global para capturar exceções não tratadas.
-6.  **Comentários e Documentação:** Código amplamente comentado com JSDoc-style para facilitar o entendimento, além deste `README.md` detalhado.
-
-## Testes Realizados
-
-Durante o desenvolvimento, os seguintes cenários foram testados:
-
-*   Conexão bem-sucedida com o MongoDB.
-*   Registro de novos usuários.
-*   Login de usuários e obtenção de token JWT.
-*   Criação de posts por usuários autenticados.
-*   Visualização de posts de usuários específicos.
-*   Visualização de todos os posts.
-*   Exclusão de posts (verificando permissão do autor).
-*   Verificação do registro de logs de informação e erro.
-*   Casos de erro como usuário não encontrado, senha incorreta e token JWT inválido.
+1.  **3 Classes com CRUD Completo:** Implementação das classes `User`, `Post` e `Comment`, cada uma com operações de Criar, Ler, Atualizar e Deletar demonstradas no `index.js`.
+2.  **Arquivo de Banco de Dados:** Configuração de conexão com MongoDB (`src/db/db.js`) e uso de Mongoose para interação com o banco.
+3.  **Classe de Log de Erro em TXT:** O módulo `src/utils/logger.js` foi configurado para registrar logs de informação e erro em arquivos de texto (`logs/app.log` e `logs/error.log`), com formatação simples e sem JSON.
+4.  **Arquivo Principal para Testes (`index.js`):** Um único arquivo (`index.js`) serve como ponto de entrada para executar todas as demonstrações CRUD e validações, facilitando a avaliação.
+5.  **Validações de Campos Obrigatórios:** As validações são realizadas nos modelos Mongoose (ex: `required: true`) e demonstradas nos testes do `index.js` com cenários de falha esperados.
+6.  **Organização e Comentários:** O código está organizado em módulos lógicos e amplamente comentado para facilitar o entendimento e a avaliação.
 
 
