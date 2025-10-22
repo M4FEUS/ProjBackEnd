@@ -97,15 +97,6 @@ O arquivo `index.js` demonstra as operações CRUD completas para as três class
     *   Exclusão de comentário.
     *   **Validações:** Exemplo de falha ao criar comentário sem `post_id`.
 
-## Critérios de Avaliação (Recuperação EC48B)
 
-Este projeto foi desenvolvido com foco nos seguintes critérios:
-
-1.  **3 Classes com CRUD Completo:** Implementação das classes `User`, `Post` e `Comment`, cada uma com operações de Criar, Ler, Atualizar e Deletar demonstradas no `index.js`.
-2.  **Arquivo de Banco de Dados:** Configuração de conexão com MongoDB (`src/db/db.js`) e uso de Mongoose para interação com o banco.
-3.  **Classe de Log de Erro em TXT:** O módulo `src/utils/logger.js` foi configurado para registrar logs de informação e erro em arquivos de texto (`logs/app.log` e `logs/error.log`), com formatação simples e sem JSON.
-4.  **Arquivo Principal para Testes (`index.js`):** Um único arquivo (`index.js`) serve como ponto de entrada para executar todas as demonstrações CRUD e validações, facilitando a avaliação.
-5.  **Validações de Campos Obrigatórios:** As validações são realizadas nos modelos Mongoose (ex: `required: true`) e demonstradas nos testes do `index.js` com cenários de falha esperados.
-6.  **Organização e Comentários:** O código está organizado em módulos lógicos e amplamente comentado para facilitar o entendimento e a avaliação.
 
 
