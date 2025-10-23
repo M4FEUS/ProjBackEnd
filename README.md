@@ -26,10 +26,6 @@ ProjBackEnd/
     │   ├── Comment.js
     │   ├── Post.js
     │   └── User.js
-    ├── repositories/
-    │   ├── commentRepository.js
-    │   ├── postRepository.js
-    │   └── userRepository.js
     └── utils/
         └── logger.js
 ```

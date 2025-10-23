@@ -5,7 +5,7 @@
  */
 
 module.exports = {
-  // Porta em que o servidor Express irá escutar. Padrão: 3000.
+  // Porta em que a aplicação Node.js irá escutar. Padrão: 3000.
   port: process.env.PORT || 3000,
 
   // Chave secreta para assinar e verificar JSON Web Tokens (JWT).

@@ -8,9 +8,9 @@
 
 const connectDB = require("./src/db/db");
 const logger = require("./src/utils/logger");
-const UserRepository = require("./src/repositories/userRepository");
-const PostRepository = require("./src/repositories/postRepository");
-const CommentRepository = require("./src/repositories/commentRepository");
+const User = require("./src/models/User");
+const Post = require("./src/models/Post");
+const Comment = require("./src/models/Comment");
 const bcrypt = require("bcryptjs");
 
 // Função para simular atrasos em operações assíncronas
@@ -32,7 +32,7 @@ async function runTests() {
     // 1. Criar Usuário
     logger.info("Criando usuário: Alice");
     const hashedPasswordAlice = await bcrypt.hash("passwordAlice", 10);
-    let alice = await UserRepository.create({
+    let alice = await User.create({
       username: "alice_wonder",
       email: "alice@example.com",
       password: hashedPasswordAlice,
@@ -41,7 +41,7 @@ async function runTests() {
 
     logger.info("Criando usuário: Bob");
     const hashedPasswordBob = await bcrypt.hash("passwordBob", 10);
-    let bob = await UserRepository.create({
+    let bob = await User.create({
       username: "bob_builder",
       email: "bob@example.com",
       password: hashedPasswordBob,
@@ -52,7 +52,7 @@ async function runTests() {
     logger.warn("Tentando criar usuário com email duplicado (deve falhar):");
     try {
       const hashedPasswordAlice2 = await bcrypt.hash("passwordAlice", 10);
-      await UserRepository.create({
+      await User.create({
         username: "alice_duplicate",
         email: "alice@example.com",
         password: hashedPasswordAlice2,
@@ -63,16 +63,16 @@ async function runTests() {
 
     // 2. Ler Usuários
     logger.info("Buscando todos os usuários:");
-    let users = await UserRepository.find({});
+    let users = await User.find({});
     logger.info("Usuários encontrados:", users.map(u => ({ id: u._id, username: u.username })));
 
     logger.info("Buscando usuário Alice pelo ID:");
-    alice = await UserRepository.findById(alice._id);
+    alice = await User.findById(alice._id);
     logger.info("Alice encontrada:", { id: alice._id, username: alice.username });
 
     // 3. Atualizar Usuário
     logger.info("Atualizando email de Alice:");
-    alice = await UserRepository.update(alice._id, { email: "alice.new@example.com" });
+    alice = await User.findByIdAndUpdate(alice._id, { email: "alice.new@example.com" }, { new: true });
     logger.info("Alice atualizada:", { id: alice._id, email: alice.email });
 
     // --- TESTES DE POST (Post) ---
@@ -80,14 +80,14 @@ async function runTests() {
 
     // 1. Criar Post
     logger.info("Alice criando um post:");
-    let postAlice1 = await PostRepository.create({
+    let postAlice1 = await Post.create({
       user_id: alice._id,
       content: "Olá, mundo! Meu primeiro post aqui."
     });
     logger.info("Post de Alice criado:", postAlice1);
 
     logger.info("Bob criando um post:");
-    let postBob1 = await PostRepository.create({
+    let postBob1 = await Post.create({
       user_id: bob._id,
       content: "Construindo algo incrível hoje!"
     });
@@ -96,23 +96,23 @@ async function runTests() {
     // 1.1. Teste de validação: Criar post sem user_id (deve falhar)
     logger.warn("Tentando criar post sem user_id (deve falhar):");
     try {
-      await PostRepository.create({ content: "Post sem autor" });
+      await Post.create({ content: "Post sem autor" });
     } catch (error) {
       logger.error(`Erro esperado ao criar post sem user_id: ${error.message}`);
     }
 
     // 2. Ler Posts
     logger.info("Buscando todos os posts:");
-    let posts = await PostRepository.find({});
+    let posts = await Post.find({});
     logger.info("Posts encontrados:", posts);
 
     logger.info("Buscando posts de Alice:");
-    let alicePosts = await PostRepository.find({ user_id: alice._id });
+    let alicePosts = await Post.find({ user_id: alice._id });
     logger.info("Posts de Alice encontrados:", alicePosts);
 
     // 3. Atualizar Post
     logger.info("Atualizando conteúdo do post de Alice:");
-    postAlice1 = await PostRepository.update(postAlice1._id, { content: "Olá novamente! Post atualizado." });
+    postAlice1 = await Post.findByIdAndUpdate(postAlice1._id, { content: "Olá novamente! Post atualizado." }, { new: true });
     logger.info("Post de Alice atualizado:", postAlice1);
 
     // --- TESTES DE COMENTÁRIO (Comment) ---
@@ -120,7 +120,7 @@ async function runTests() {
 
     // 1. Criar Comentário
     logger.info("Bob comentando no post de Alice:");
-    let commentBob1 = await CommentRepository.create({
+    let commentBob1 = await Comment.create({
       post_id: postAlice1._id,
       user_id: bob._id,
       content: "Ótimo post, Alice!"
@@ -128,7 +128,7 @@ async function runTests() {
     logger.info("Comentário de Bob criado:", commentBob1);
 
     logger.info("Alice comentando no próprio post:");
-    let commentAlice1 = await CommentRepository.create({
+    let commentAlice1 = await Comment.create({
       post_id: postAlice1._id,
       user_id: alice._id,
       content: "Obrigada, Bob!"
@@ -138,7 +138,7 @@ async function runTests() {
     // 1.1. Teste de validação: Criar comentário sem post_id (deve falhar)
     logger.warn("Tentando criar comentário sem post_id (deve falhar):");
     try {
-      await CommentRepository.create({
+      await Comment.create({
         user_id: bob._id,
         content: "Comentário sem post"
       });
@@ -148,16 +148,16 @@ async function runTests() {
 
     // 2. Ler Comentários
     logger.info("Buscando todos os comentários:");
-    let comments = await CommentRepository.find({});
+    let comments = await Comment.find({});
     logger.info("Comentários encontrados:", comments);
 
     logger.info("Buscando comentários do post de Alice:");
-    let postAliceComments = await CommentRepository.find({ post_id: postAlice1._id });
+    let postAliceComments = await Comment.find({ post_id: postAlice1._id });
     logger.info("Comentários no post de Alice:", postAliceComments);
 
     // 3. Atualizar Comentário
     logger.info("Atualizando conteúdo do comentário de Bob:");
-    commentBob1 = await CommentRepository.update(commentBob1._id, { content: "Realmente muito bom, Alice!" });
+    commentBob1 = await Comment.findByIdAndUpdate(commentBob1._id, { content: "Realmente muito bom, Alice!" }, { new: true });
     logger.info("Comentário de Bob atualizado:", commentBob1);
 
     // --- TESTES DE EXCLUSÃO ---
@@ -165,29 +165,29 @@ async function runTests() {
 
     // 4. Deletar Comentário
     logger.info("Deletando comentário de Alice:");
-    await CommentRepository.remove(commentAlice1._id);
+    await Comment.findByIdAndDelete(commentAlice1._id);
     logger.info("Comentário de Alice deletado.");
-    let remainingComments = await CommentRepository.find({ _id: commentAlice1._id });
+    let remainingComments = await Comment.find({ _id: commentAlice1._id });
     logger.info("Comentário de Alice após exclusão (deve ser vazio):", remainingComments);
 
     // 4. Deletar Post
     logger.info("Deletando post de Alice (e seus comentários associados, se houver cascade):");
-    await PostRepository.remove(postAlice1._id);
+    await Post.findByIdAndDelete(postAlice1._id);
     logger.info("Post de Alice deletado.");
-    let remainingPosts = await PostRepository.find({ _id: postAlice1._id });
+    let remainingPosts = await Post.find({ _id: postAlice1._id });
     logger.info("Post de Alice após exclusão (deve ser vazio):", remainingPosts);
-    let commentsAfterPostDeletion = await CommentRepository.find({ post_id: postAlice1._id });
+    let commentsAfterPostDeletion = await Comment.find({ post_id: postAlice1._id });
     logger.info("Comentários do post de Alice após exclusão do post (deve ser vazio):", commentsAfterPostDeletion);
 
     // 4. Deletar Usuário
     logger.info("Deletando usuário Bob (e seus posts/comentários associados, se houver cascade):");
-    await UserRepository.remove(bob._id);
+    await User.findByIdAndDelete(bob._id);
     logger.info("Usuário Bob deletado.");
-    let remainingBob = await UserRepository.find({ _id: bob._id });
+    let remainingBob = await User.find({ _id: bob._id });
     logger.info("Usuário Bob após exclusão (deve ser vazio):", remainingBob);
 
     logger.info("Deletando usuário Alice:");
-    await UserRepository.remove(alice._id);
+    await User.findByIdAndDelete(alice._id);
     logger.info("Usuário Alice deletado.");
 
   } catch (error) {
