@@ -31,6 +31,10 @@ O projeto segue uma estrutura MVC para organização e escalabilidade:
 
 ## Como Iniciar
 
+Pré-requisitos
+
+Certifique-se de ter o Node.js e o MongoDB instalados em sua máquina.
+
 1.  **Instalar Dependências:**
     ```bash
     npm install
@@ -125,7 +129,7 @@ curl -X POST http://localhost:3000/api/auth/register -H "Content-Type: applicati
 Autentica o usuário e retorna um token de acesso.
 
 ```bash
-curl -X POST http://localhost:3000/api/auth/login -H "Content-Type: application/json" -d "{\"username\":\"alice\",\"password\":\"senha123\"}"
+curl -X POST http://localhost:3000/api/auth/login -H "Content-Type: application/json" -d "{\"email\":\"alice@test.com\",\"password\":\"senha123\"}"
 ```
 
 ✅ **Resposta esperada:**
