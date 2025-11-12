@@ -113,12 +113,10 @@ curl -X POST http://localhost:3000/api/auth/register -H "Content-Type: applicati
 
 ```json
 {
-  "message": "Usuário registrado com sucesso!",
-  "user": {
-    "_id": "...",
-    "username": "alice",
-    "email": "alice@test.com"
-  }
+  "_id": "...",
+  "username": "alice",
+  "email": "alice@test.com",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
 }
 ```
 
@@ -136,6 +134,9 @@ curl -X POST http://localhost:3000/api/auth/login -H "Content-Type: application/
 
 ```json
 {
+  "_id": "...",
+  "username": "alice",
+  "email": "alice@test.com",
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
 }
 ```
@@ -156,12 +157,11 @@ curl -X POST http://localhost:3000/api/posts -H "Content-Type: application/json"
 
 ```json
 {
-  "message": "Post criado com sucesso!",
-  "post": {
-    "_id": "...",
-    "content": "Meu primeiro post!",
-    "author": "alice"
-  }
+  "_id": "...",
+  "user_id": "64a1b2c3d4e5f67890123456",
+  "content": "Meu primeiro post!",
+  "created_at": "2025-01-01T12:00:00.000Z",
+  "__v": 0
 }
 ```
 
@@ -181,8 +181,14 @@ curl http://localhost:3000/api/posts
 [
   {
     "_id": "...",
+    "user_id": {
+      "_id": "64a1b2c3d4e5f67890123456",
+      "username": "alice",
+      "email": "alice@test.com"
+    },
     "content": "Meu primeiro post!",
-    "author": "alice"
+    "created_at": "2025-01-01T12:00:00.000Z",
+    "__v": 0
   }
 ]
 ```
@@ -194,19 +200,19 @@ curl http://localhost:3000/api/posts
 Use o ID de um post existente no lugar de `:postId`.
 
 ```bash
-curl -X POST http://localhost:3000/api/comments/ID_DO_POST -H "Content-Type: application/json" -H "Authorization: Bearer SEU_TOKEN_AQUI" -d "{\"text\":\"Comentário de teste!\"}"
+curl -X POST http://localhost:3000/api/comments/ID_DO_POST -H "Content-Type: application/json" -H "Authorization: Bearer SEU_TOKEN_AQUI" -d "{\"content\":\"Comentário de teste!\"}"
 ```
 
 ✅ **Resposta esperada:**
 
 ```json
 {
-  "message": "Comentário adicionado com sucesso!",
-  "comment": {
-    "_id": "...",
-    "text": "Comentário de teste!",
-    "author": "alice"
-  }
+  "_id": "...",
+  "post_id": "74a1b2c3d4e5f67890123456",
+  "user_id": "64a1b2c3d4e5f67890123456",
+  "content": "Comentário de teste!",
+  "created_at": "2025-01-01T12:05:00.000Z",
+  "__v": 0
 }
 ```
 
@@ -227,7 +233,9 @@ curl http://localhost:3000/api/users -H "Authorization: Bearer SEU_TOKEN_AQUI"
   {
     "_id": "...",
     "username": "alice",
-    "email": "alice@test.com"
+    "email": "alice@test.com",
+    "created_at": "2025-01-01T12:00:00.000Z",
+    "__v": 0
   }
 ]
 ```
