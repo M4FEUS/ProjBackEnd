@@ -1,4 +1,4 @@
-# Projeto 2: Micro-Blogging API RESTful (EC48B)
+# Projeto 2: Micro-Blogging (EC48B)
 
 Esta é a evolução do Projeto 1, transformado em uma API RESTful completa utilizando **Node.js** e o framework **Express.js**. O projeto implementa a arquitetura MVC (Model-View-Controller) e autenticação baseada em JSON Web Token (JWT), atendendo aos requisitos do Projeto 2.
 
